@@ -25,3 +25,4 @@ logs
 
 /prisma/generated
 /prisma/migrations
+/dev.db
