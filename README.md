@@ -1,75 +1,87 @@
-# Nuxt Minimal Starter
+# Nuxt Template (Better Auth + Prisma + SQLite)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A modern, production-ready Nuxt 4 template featuring a robust authentication system, ORM integration, and a clean UI foundation.
 
-## Setup
+## Features
 
-Make sure to install dependencies:
+- **Nuxt 4**: The latest and greatest from the Nuxt team.
+- **Better Auth**: Comprehensive authentication with **Email OTP** support.
+- **Prisma**: Type-safe ORM for interacting with the database.
+- **SQLite**: Lightweight, zero-configuration database, ideal for development and small-to-medium projects.
+- **Nuxt UI v3**: Beautiful, accessible, and customizable UI components built with Tailwind CSS.
+- **Nodemailer**: Pre-configured for sending verification emails via Gmail.
+
+## Stack
+
+- **Framework**: [Nuxt](https://nuxt.com/)
+- **Auth**: [Better Auth](https://www.better-auth.com/)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Database**: [SQLite](https://sqlite.org/)
+- **UI Framework**: [Nuxt UI](https://ui3.nuxt.com/)
+- **Email**: [Nodemailer](https://nodemailer.com/)
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-# npm
-npm install
+git clone <your-repo-url>
+cd nuxt-template
+```
 
-# pnpm
+### 2. Install dependencies
+
+This project uses `pnpm`, but you can use `npm` as well.
+
+```bash
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### 3. Setup Environment Variables
 
-Start the development server on `http://localhost:3000`:
+Copy the example environment file and fill in your details.
 
 ```bash
-# npm
-npm run dev
+cp .env.example .env
+```
 
-# pnpm
+Open `.env` and configure the following:
+
+- `DATABASE_URL`: The SQLite connection string (default: `file:./dev.db`).
+- `BETTER_AUTH_SECRET`: A secure random string for encryption. You can generate one using `openssl rand -hex 32`.
+- `BETTER_AUTH_URL`: The base URL of your application (default: `http://localhost:3000`).
+- `EMAIL_USER`: Your Gmail address (for OTP delivery).
+- `EMAIL_PASS`: Your Gmail App Password. [How to generate an App Password](https://support.google.com/accounts/answer/185833).
+
+### 4. Database Setup
+
+Initialize your SQLite database and run migrations.
+
+```bash
+pnpm dlx prisma migrate dev --name init
+```
+
+To reset the database and run the seed script:
+
+```bash
+pnpm prisma:reset
+```
+
+### 5. Start the development server
+
+```bash
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Your application will be available at `http://localhost:3000`.
 
-Build the application for production:
+## Project Structure
 
-```bash
-# npm
-npm run build
+- `app/`: Frontend code (pages, components, assets, composables).
+- `server/`: Backend code (API routes, authentication logic, database utilities).
+- `prisma/`: Database schema, migrations, and seed scripts.
+- `public/`: Static assets.
 
-# pnpm
-pnpm build
+## License
 
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+MIT
