@@ -61,6 +61,11 @@ Initialize your SQLite database and run migrations.
 pnpm dlx prisma migrate dev --name init
 ```
 
+Generate the Prisma client
+```bash
+pnpm dlx prisma generate
+```
+
 To reset the database and run the seed script:
 
 ```bash
