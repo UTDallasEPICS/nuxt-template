@@ -22,8 +22,8 @@ export const auth = betterAuth({
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: email,
-          subject: 'OTP',
-          html: `${otp}`,
+          subject: 'OTP for nuxt-template',
+          html: `Your OTP is: ${otp}`,
         })
       },
     }),

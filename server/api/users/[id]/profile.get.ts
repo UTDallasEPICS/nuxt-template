@@ -2,6 +2,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 export default defineEventHandler(async (event) => {
+  const session = await auth.api.getSession({
+    headers: event.headers,
+  })
+
+  if (!session) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  }
+
   const userId = getRouterParam(event, 'id')
 
   if (!userId) {
