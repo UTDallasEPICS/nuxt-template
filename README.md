@@ -22,6 +22,10 @@ A modern, production-ready Nuxt 4 template featuring a robust authentication sys
 
 ## Getting Started
 
+### Want to use the template?
+
+See the [Template Usage docs](docs/template_usage.md). Otherwise, feel free to keep moving with the setup steps!
+
 ### 1. Clone the repository
 
 ```bash
@@ -101,6 +105,41 @@ Login requires an email address that already exists in the database.
 - `server/`: Backend code (API routes, authentication logic, database utilities).
 - `prisma/`: Database schema, migrations, and seed scripts.
 - `public/`: Static assets.
+
+## GitHub Actions Configuration
+
+**Important**: You must update the GitHub Actions workflow to point to your own repository and AWS configuration.
+
+### Update GitHub Actions
+
+Add the following Secrets and Variables to your repository:
+
+1. **ACTIONS_ROLE_ARN (Secret)**:
+
+   ```yaml
+   arn:aws:iam::YOUR-AWS-ACCOUNT-ID:role/YOUR-ROLE-NAME
+   ```
+
+2. **REPOSITORY (Variable)**:
+
+   ```yaml
+   your-repository-name
+   ```
+
+Optionally, you may update the AWS region.
+
+3. **AWS Region** (line 26 in `.github/workflows/main.yml`):
+   ```yaml
+   aws-region: your-aws-region
+   ```
+
+### Required AWS Setup
+
+Before the GitHub Actions will work, you need:
+
+1. **AWS ECR Repository**: Create a repository in Amazon ECR
+2. **IAM Role**: Create a role with GitHub Actions OIDC provider and ECR permissions
+3. **GitHub Secrets**: Ensure your repository has the necessary AWS permissions
 
 ## License
 
