@@ -1,23 +1,12 @@
 <script setup lang="ts">
-  import { z } from 'zod'
   import type { FormSubmitEvent } from '@nuxt/ui'
   import { authClient } from '../utils/auth-client'
+  import { createAuthFormSchema } from '../utils/auth-form'
 
   const toast = useToast()
   const isEmailSent = ref(false)
 
-  const schema = computed(() => {
-    if (!isEmailSent.value) {
-      return z.object({
-        email: z.string().email('Invalid email'),
-      })
-    } else {
-      return z.object({
-        email: z.string().email('Invalid email'),
-        otp: z.array(z.string()).length(6, 'Must be 6 digits'),
-      })
-    }
-  })
+  const schema = computed(() => createAuthFormSchema(isEmailSent.value))
 
   const state = reactive({
     email: '',
@@ -60,11 +49,11 @@
       </template>
 
       <UForm :schema="schema" :state="state" @submit="handleSubmit" class="space-y-5">
-        <UFormField name="email" v-if="!isEmailSent">
+        <UFormField label="Email" name="email" v-if="!isEmailSent">
           <UInput v-model="state.email" class="w-full" placeholder="Email" />
         </UFormField>
 
-        <UFormField name="otp" v-if="isEmailSent">
+        <UFormField label="One-time password" name="otp" v-if="isEmailSent">
           <UPinInput
             otp
             v-model="state.otp"

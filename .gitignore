@@ -25,3 +25,10 @@ logs
 
 /prisma/generated
 /dev.db
+
+# Local test output
+/coverage/
+/playwright-report/
+/test-results/
+/.vitest/
+/.nuxtrc
