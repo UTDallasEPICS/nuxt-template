@@ -58,8 +58,9 @@ jobs:
           REPOSITORY: ${{ vars.REPOSITORY }}
           SHA: ${{ github.sha }}
         run: |
-          python3 -c "
-          import json, os
+          python3 << 'PYEOF'
+          import json, os, subprocess
+
           payload = {
               'project': os.environ['REPOSITORY'],
               'environment': 'prod',
@@ -67,23 +68,29 @@ jobs:
               'migration_bucket': 'npts-env-bucket',
               'migration_key': os.environ['REPOSITORY'] + '/migrations/' + os.environ['SHA'] + '.zip'
           }
-          with open('/tmp/payload.json', 'w') as f:
-              json.dump(payload, f)
-          "
-          aws lambda invoke \
-            --function-name npts-migration \
-            --invocation-type RequestResponse \
-            --cli-read-timeout 900 \
-            --payload file:///tmp/payload.json \
-            /tmp/lambda-response.json
 
-          STATUS=$(jq -r '.status' /tmp/lambda-response.json)
-          if [ "$STATUS" != "success" ]; then
-            MESSAGE=$(jq -r '.message // "Unknown error"' /tmp/lambda-response.json)
-            echo "Migration failed: $MESSAGE"
-            exit 1
-          fi
-          echo "Migration succeeded"
+          proc = subprocess.run([
+              'aws', 'lambda', 'invoke',
+              '--function-name', 'npts-migration',
+              '--invocation-type', 'RequestResponse',
+              '--cli-read-timeout', '900',
+              '--payload', json.dumps(payload),
+              '/tmp/lambda-response.json'
+          ], capture_output=True, text=True)
+
+          if proc.returncode != 0:
+              print(proc.stderr)
+              exit(1)
+
+          with open('/tmp/lambda-response.json') as f:
+              response = json.load(f)
+
+          if response.get('status') != 'success':
+              print(f"Migration failed: {response.get('message', 'Unknown error')}")
+              exit(1)
+
+          print('Migration succeeded')
+          PYEOF
 
       - name: Push image and deploy
         env:
