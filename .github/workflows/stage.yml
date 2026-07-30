@@ -58,6 +58,18 @@ jobs:
           REPOSITORY: ${{ vars.REPOSITORY }}
           SHA: ${{ github.sha }}
         run: |
+          echo "=== AWS CLI version ==="
+          aws --version
+
+          echo "=== Test 1: hardcoded '{}' payload ==="
+          aws lambda invoke \
+            --function-name npts-migration \
+            --invocation-type RequestResponse \
+            --payload '{}' \
+            /tmp/test1.json 2>&1 || true
+          cat /tmp/test1.json 2>/dev/null || echo "no output"
+
+          echo "=== Test 2: without --cli-read-timeout ==="
           PAYLOAD=$(jq -n -c \
             --arg project "$REPOSITORY" \
             --arg environment "stage" \
@@ -68,7 +80,6 @@ jobs:
           aws lambda invoke \
             --function-name npts-migration \
             --invocation-type RequestResponse \
-            --cli-read-timeout 900 \
             --payload "$PAYLOAD" \
             /tmp/lambda-response.json
 
