@@ -59,17 +59,17 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           python3 -c "
-import json, os
-payload = {
-    'project': os.environ['REPOSITORY'],
-    'environment': 'stage',
-    'orm': os.environ.get('ORM', ''),
-    'migration_bucket': 'npts-env-bucket',
-    'migration_key': os.environ['REPOSITORY'] + '/migrations/' + os.environ['SHA'] + '.zip'
-}
-with open('/tmp/payload.json', 'w') as f:
-    json.dump(payload, f)
-"
+          import json, os
+          payload = {
+              'project': os.environ['REPOSITORY'],
+              'environment': 'stage',
+              'orm': os.environ.get('ORM', ''),
+              'migration_bucket': 'npts-env-bucket',
+              'migration_key': os.environ['REPOSITORY'] + '/migrations/' + os.environ['SHA'] + '.zip'
+          }
+          with open('/tmp/payload.json', 'w') as f:
+              json.dump(payload, f)
+          "
           aws lambda invoke \
             --function-name npts-migration \
             --invocation-type RequestResponse \
