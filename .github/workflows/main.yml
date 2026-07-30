@@ -58,29 +58,11 @@ jobs:
           REPOSITORY: ${{ vars.REPOSITORY }}
           SHA: ${{ github.sha }}
         run: |
-          echo "=== AWS CLI version ==="
-          aws --version
-
-          echo "=== Test 1: hardcoded '{}' payload ==="
           aws lambda invoke \
             --function-name npts-migration \
             --invocation-type RequestResponse \
-            --payload '{}' \
-            /tmp/test1.json 2>&1 || true
-          cat /tmp/test1.json 2>/dev/null || echo "no output"
-
-          echo "=== Test 2: without --cli-read-timeout ==="
-          PAYLOAD=$(jq -n -c \
-            --arg project "$REPOSITORY" \
-            --arg environment "prod" \
-            --arg orm "${ORM:-}" \
-            --arg migration_bucket "npts-env-bucket" \
-            --arg migration_key "$REPOSITORY/migrations/$SHA.zip" \
-            '{project: $project, environment: $environment, orm: $orm, migration_bucket: $migration_bucket, migration_key: $migration_key}')
-          aws lambda invoke \
-            --function-name npts-migration \
-            --invocation-type RequestResponse \
-            --payload "$PAYLOAD" \
+            --cli-read-timeout 900 \
+            --payload '{"project":"'"$REPOSITORY"'","environment":"prod","orm":"'"${ORM:-}"'","migration_bucket":"npts-env-bucket","migration_key":"'"$REPOSITORY"'/migrations/'"$SHA"'.zip"}' \
             /tmp/lambda-response.json
 
           STATUS=$(jq -r '.status' /tmp/lambda-response.json)
