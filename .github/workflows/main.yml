@@ -57,19 +57,21 @@ jobs:
         env:
           REPOSITORY: ${{ vars.REPOSITORY }}
         run: |
-          PAYLOAD=$(jq -n \
-            --arg project "$REPOSITORY" \
-            --arg env "prod" \
-            --arg orm "$ORM" \
-            --arg bucket "npts-env-bucket" \
-            --arg key "$REPOSITORY/migrations/${{ github.sha }}.zip" \
-            '{project: $project, environment: $env, orm: $orm, migration_bucket: $bucket, migration_key: $key}')
+          cat > /tmp/payload.json << EOF
+          {
+            "project": "$REPOSITORY",
+            "environment": "prod",
+            "orm": "$ORM",
+            "migration_bucket": "npts-env-bucket",
+            "migration_key": "$REPOSITORY/migrations/${{ github.sha }}.zip"
+          }
+          EOF
 
           aws lambda invoke \
             --function-name npts-migration \
             --invocation-type RequestResponse \
             --cli-read-timeout 900 \
-            --payload "$PAYLOAD" \
+            --payload file:///tmp/payload.json \
             /tmp/lambda-response.json
 
           STATUS=$(jq -r '.status' /tmp/lambda-response.json)
