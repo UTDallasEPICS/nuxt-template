@@ -58,39 +58,27 @@ jobs:
           REPOSITORY: ${{ vars.REPOSITORY }}
           SHA: ${{ github.sha }}
         run: |
-          python3 << 'PYEOF'
-          import json, os, subprocess
+          PAYLOAD=$(jq -n -c \
+            --arg project "$REPOSITORY" \
+            --arg environment "stage" \
+            --arg orm "${ORM:-}" \
+            --arg migration_bucket "npts-env-bucket" \
+            --arg migration_key "$REPOSITORY/migrations/$SHA.zip" \
+            '{project: $project, environment: $environment, orm: $orm, migration_bucket: $migration_bucket, migration_key: $migration_key}')
+          aws lambda invoke \
+            --function-name npts-migration \
+            --invocation-type RequestResponse \
+            --cli-read-timeout 900 \
+            --payload "$PAYLOAD" \
+            /tmp/lambda-response.json
 
-          payload = {
-              'project': os.environ['REPOSITORY'],
-              'environment': 'stage',
-              'orm': os.environ.get('ORM', ''),
-              'migration_bucket': 'npts-env-bucket',
-              'migration_key': os.environ['REPOSITORY'] + '/migrations/' + os.environ['SHA'] + '.zip'
-          }
-
-          proc = subprocess.run([
-              'aws', 'lambda', 'invoke',
-              '--function-name', 'npts-migration',
-              '--invocation-type', 'RequestResponse',
-              '--cli-read-timeout', '900',
-              '--payload', json.dumps(payload),
-              '/tmp/lambda-response.json'
-          ], capture_output=True, text=True)
-
-          if proc.returncode != 0:
-              print(proc.stderr)
-              exit(1)
-
-          with open('/tmp/lambda-response.json') as f:
-              response = json.load(f)
-
-          if response.get('status') != 'success':
-              print(f"Migration failed: {response.get('message', 'Unknown error')}")
-              exit(1)
-
-          print('Migration succeeded')
-          PYEOF
+          STATUS=$(jq -r '.status' /tmp/lambda-response.json)
+          if [ "$STATUS" != "success" ]; then
+            MESSAGE=$(jq -r '.message // "Unknown error"' /tmp/lambda-response.json)
+            echo "Migration failed: $MESSAGE"
+            exit 1
+          fi
+          echo "Migration succeeded"
 
       - name: Push image and deploy
         env:
