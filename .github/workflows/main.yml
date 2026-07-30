@@ -56,17 +56,20 @@ jobs:
       - name: Run migration via Lambda
         env:
           REPOSITORY: ${{ vars.REPOSITORY }}
+          SHA: ${{ github.sha }}
         run: |
-          cat > /tmp/payload.json << EOF
-          {
-            "project": "$REPOSITORY",
-            "environment": "prod",
-            "orm": "$ORM",
-            "migration_bucket": "npts-env-bucket",
-            "migration_key": "$REPOSITORY/migrations/${{ github.sha }}.zip"
-          }
-          EOF
-
+          python3 -c "
+import json, os
+payload = {
+    'project': os.environ['REPOSITORY'],
+    'environment': 'prod',
+    'orm': os.environ.get('ORM', ''),
+    'migration_bucket': 'npts-env-bucket',
+    'migration_key': os.environ['REPOSITORY'] + '/migrations/' + os.environ['SHA'] + '.zip'
+}
+with open('/tmp/payload.json', 'w') as f:
+    json.dump(payload, f)
+"
           aws lambda invoke \
             --function-name npts-migration \
             --invocation-type RequestResponse \
