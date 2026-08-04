@@ -32,20 +32,28 @@ jobs:
         run: |
           docker build --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:stage .
 
-      - name: Detect ORM and package migration files
+      - name: Detect ORM and package migration bundle
         env:
           REPOSITORY: ${{ vars.REPOSITORY }}
         run: |
+          rm -f /tmp/migration.zip
           if [ -f "prisma/schema.prisma" ]; then
             echo "ORM=prisma" >> $GITHUB_ENV
-            zip -r /tmp/migration.zip \
-              prisma/ package.json pnpm-lock.yaml pnpm-workspace.yaml prisma.config.ts 2>/dev/null || \
-            zip -r /tmp/migration.zip \
-              prisma/ package.json pnpm-lock.yaml pnpm-workspace.yaml
+            FILES="package.json pnpm-lock.yaml tsconfig.json prisma/"
+            [ -f pnpm-workspace.yaml ] && FILES="$FILES pnpm-workspace.yaml"
+            [ -f prisma.config.ts ] && FILES="$FILES prisma.config.ts"
+            zip -ry /tmp/migration.zip $FILES
           elif [ -f "drizzle.config.ts" ]; then
             echo "ORM=drizzle" >> $GITHUB_ENV
-            zip -r /tmp/migration.zip \
-              drizzle/ drizzle.config.ts server/db/ package.json pnpm-lock.yaml pnpm-workspace.yaml
+            FILES="package.json pnpm-lock.yaml tsconfig.json drizzle.config.ts"
+            [ -f pnpm-workspace.yaml ] && FILES="$FILES pnpm-workspace.yaml"
+            [ -d drizzle ] && FILES="$FILES drizzle/"
+            [ -d server/db ] && FILES="$FILES server/db/"
+            if [ ! -d drizzle ] && [ ! -d server/db ]; then
+              echo "drizzle.config.ts present but neither drizzle/ nor server/db/ found"
+              exit 1
+            fi
+            zip -ry /tmp/migration.zip $FILES
           else
             echo "No supported ORM detected (expected prisma/ or drizzle/)"
             exit 1
@@ -56,7 +64,7 @@ jobs:
       - name: Run migration via Lambda
         run: |
           aws lambda invoke \
-            --function-name npts-migration \
+            --function-name npts-migration-${{ vars.REPOSITORY }}-stage \
             --invocation-type RequestResponse \
             --cli-read-timeout 900 \
             --cli-binary-format raw-in-base64-out \
