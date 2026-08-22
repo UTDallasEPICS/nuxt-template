@@ -2,8 +2,9 @@ import 'dotenv/config'
 import Database from 'better-sqlite3'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import * as schema from '../db/schema'
+import { env } from './env'
 
-const connectionString = process.env.DATABASE_URL!.replace('file:', '')
+const connectionString = env.DATABASE_URL.replace('file:', '')
 
 const globalForDb = globalThis as unknown as {
   db: ReturnType<typeof drizzle<typeof schema>> | undefined
