@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { z } from 'zod'
-  import type { FormSubmitEvent } from '@nuxt/ui'
   import { authClient } from '../utils/auth-client'
 
   const toast = useToast()
@@ -24,9 +23,9 @@
     otp: [] as string[],
   })
 
-  async function handleSubmit(event: FormSubmitEvent<any>) {
+  async function handleSubmit() {
     if (!isEmailSent.value) {
-      const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+      const { error } = await authClient.emailOtp.sendVerificationOtp({
         email: state.email,
         type: 'sign-in',
       })
@@ -38,7 +37,7 @@
         toast.add({ title: 'Success', description: 'OTP sent to your email', color: 'success' })
       }
     } else {
-      const { data, error } = await authClient.signIn.emailOtp({
+      const { error } = await authClient.signIn.emailOtp({
         email: state.email,
         otp: state.otp.join(''),
       })

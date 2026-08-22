@@ -47,7 +47,7 @@ describe('application shell (app.vue)', () => {
     })
 
     // Assert: the theme toggle is present and labelled for screen readers.
-    const toggle = wrapper.get('[aria-label="Toggle Theme"]')
+    const toggle = wrapper.find('[aria-label="Toggle Theme"]')
     expect(toggle.exists()).toBe(true)
     expect(fetchSpy).not.toHaveBeenCalled()
   })

@@ -1,7 +1,8 @@
-name: Test
+name: CI
 
-# Runs the Vitest suite on every pull request and on pushes to the deploy
-# branches. Deploys themselves live in deploy.yml; this is the correctness gate.
+# Runs lint, type-check, and the Vitest suite on every pull request and on
+# pushes to the deploy branches. Deploys themselves live in deploy.yml; this is
+# the correctness gate.
 on:
   pull_request:
   push:
@@ -32,6 +33,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm typecheck
 
       - name: Run tests
         run: pnpm test

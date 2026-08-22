@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import Database from 'better-sqlite3'
-import { drizzle, eq } from 'drizzle-orm/better-sqlite3'
+import { drizzle } from 'drizzle-orm/better-sqlite3'
 import * as schema from './schema'
 
 const connectionString = process.env.DATABASE_URL!.replace('file:', '')
@@ -15,10 +15,13 @@ async function main() {
   })
 
   if (!existingUser) {
-    const [created] = await db.insert(schema.user).values({
-      email: 'seeded-user@email.com',
-      name: 'Sample Seeded User',
-    }).returning()
+    const [created] = await db
+      .insert(schema.user)
+      .values({
+        email: 'seeded-user@email.com',
+        name: 'Sample Seeded User',
+      })
+      .returning()
     console.log({ user: created })
   } else {
     console.log({ user: existingUser })

@@ -21,7 +21,7 @@ export const auth = betterAuth({
   }),
   plugins: [
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
+      async sendVerificationOTP({ email, otp }) {
         await transporter.sendMail({
           from: env.EMAIL_FROM,
           to: email,
