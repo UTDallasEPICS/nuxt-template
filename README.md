@@ -8,7 +8,7 @@ A modern, production-ready Nuxt 4 template featuring a robust authentication sys
 - **Better Auth**: Comprehensive authentication with **Email OTP** support.
 - **Drizzle**: Type-safe ORM for interacting with the database.
 - **SQLite**: Lightweight, zero-configuration database, ideal for development and small-to-medium projects.
-- **Nuxt UI v3**: Beautiful, accessible, and customizable UI components built with Tailwind CSS.
+- **Nuxt UI v4**: Beautiful, accessible, and customizable UI components built with Tailwind CSS.
 - **Nodemailer**: Pre-configured for sending verification emails via Gmail.
 - **Vitest**: A ready-to-run testing baseline with an example component test. See [Testing](#testing).
 
@@ -18,14 +18,12 @@ A modern, production-ready Nuxt 4 template featuring a robust authentication sys
 - **Auth**: [Better Auth](https://www.better-auth.com/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Database**: [SQLite](https://sqlite.org/)
-- **UI Framework**: [Nuxt UI](https://ui3.nuxt.com/)
+- **UI Framework**: [Nuxt UI](https://ui.nuxt.com/)
 - **Email**: [Nodemailer](https://nodemailer.com/)
 
 ## Getting Started
 
-### Want to use the template?
-
-See the [Template Usage docs](docs/template_usage.md). Otherwise, feel free to keep moving with the setup steps!
+See the [Documentation](#documentation) section for topic guides. Otherwise, follow the setup steps below.
 
 ### 1. Clone the repository
 
@@ -102,6 +100,16 @@ Login requires an email address that already exists in the database.
 - `drizzle/`: Generated migrations.
 - `public/`: Static assets.
 - `tests/`: Automated tests (Vitest).
+- `docs/`: Topic guides (see [Documentation](#documentation)).
+
+## Documentation
+
+Topic guides live in the [`docs/`](docs/) directory:
+
+- [`docs/testing.md`](docs/testing.md) — Vitest testing guide (from-zero, for beginners).
+- [`docs/better_auth.md`](docs/better_auth.md) — Better Auth setup and usage.
+- [`docs/file_upload_and_serve.md`](docs/file_upload_and_serve.md) — Uploading and serving files.
+- [`docs/mcp.md`](docs/mcp.md) — Recommended MCP servers for AI coding assistants.
 
 ## Testing
 
@@ -120,6 +128,9 @@ and `pnpm test` works immediately.
 New to testing? The [**Testing guide**](docs/testing.md) walks a complete beginner through
 running, reading, writing, reviewing, and troubleshooting tests — and explains the expectation
 that merge requests include a meaningful test for changed behavior.
+
+CI runs `pnpm test` automatically on every pull request and on pushes to `main`/`stage`
+(see `.github/workflows/test.yml`), so a broken or missing test is visible before it merges.
 
 > Browser/end-to-end testing (Playwright) is intentionally kept separate from this template.
 
@@ -145,7 +156,7 @@ Add the following Secrets and Variables to your repository:
 
 Optionally, you may update the AWS region.
 
-3. **AWS Region** (line 26 in `.github/workflows/main.yml`):
+3. **AWS Region** (the `aws-region` in `.github/workflows/deploy.yml`):
    ```yaml
    aws-region: your-aws-region
    ```
