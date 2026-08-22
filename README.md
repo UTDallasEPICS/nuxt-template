@@ -10,6 +10,7 @@ A modern, production-ready Nuxt 4 template featuring a robust authentication sys
 - **SQLite**: Lightweight, zero-configuration database, ideal for development and small-to-medium projects.
 - **Nuxt UI v3**: Beautiful, accessible, and customizable UI components built with Tailwind CSS.
 - **Nodemailer**: Pre-configured for sending verification emails via Gmail.
+- **Vitest**: A ready-to-run testing baseline with an example component test. See [Testing](#testing).
 
 ## Stack
 
@@ -100,6 +101,27 @@ Login requires an email address that already exists in the database.
 - `server/db/`: Database schema and seed scripts.
 - `drizzle/`: Generated migrations.
 - `public/`: Static assets.
+- `tests/`: Automated tests (Vitest).
+
+## Testing
+
+This template ships with a small **Vitest** testing baseline and an example component test,
+so every project starts with a working `pnpm test` command and a reference to copy from.
+
+```bash
+pnpm test        # run all tests once
+pnpm test:watch  # re-run tests as you edit (Ctrl+C to stop)
+```
+
+The baseline is intentionally self-contained: it needs **no `.env` file, no database, no real
+email, no browser installation, no dev server, and no customer data**. Clone, `pnpm install`,
+and `pnpm test` works immediately.
+
+New to testing? The [**Testing guide**](docs/testing.md) walks a complete beginner through
+running, reading, writing, reviewing, and troubleshooting tests — and explains the expectation
+that merge requests include a meaningful test for changed behavior.
+
+> Browser/end-to-end testing (Playwright) is intentionally kept separate from this template.
 
 ## GitHub Actions Configuration
 
