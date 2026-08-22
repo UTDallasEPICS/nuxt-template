@@ -3,10 +3,12 @@ import fs from 'fs'
 import { db } from '~~/server/utils/db'
 import { user } from '~~/server/db/schema'
 import { eq } from 'drizzle-orm'
+import { requireUser } from '~~/server/utils/session'
 
 export default defineEventHandler(async (event) => {
-  // Guaranteed by the auth gateway (server/middleware/auth.ts).
-  const currentUser = event.context.user!
+  // Auth is enforced by the gateway (server/middleware/auth.ts); requireUser
+  // turns that guarantee into a typed, non-null user.
+  const currentUser = requireUser(event)
 
   const form = await readMultipartFormData(event)
 
