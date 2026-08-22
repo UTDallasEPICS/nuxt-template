@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from '@better-auth/drizzle-adapter'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from './db'
 import { emailOTP } from 'better-auth/plugins/email-otp'
 import nodemailer from 'nodemailer'
@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 })
-
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
