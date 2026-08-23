@@ -10,9 +10,12 @@ export default defineNuxtConfig({
       stylistic: false,
     },
   },
-  // Surface TypeScript errors in the terminal during `nuxt dev` and `nuxt build`.
+  // Surface TypeScript errors in the terminal during `nuxt dev`. Not during
+  // `nuxt build`: the in-build vue-tsc runs in a clean environment where it
+  // can't resolve auto-imports/module types and fails the Docker deploy. CI
+  // runs `pnpm typecheck` (nuxi typecheck) as the real gate.
   typescript: {
-    typeCheck: true,
+    typeCheck: process.env.NODE_ENV !== 'production',
   },
   vite: {
     optimizeDeps: {
