@@ -129,7 +129,7 @@ New to testing? The [**Testing guide**](docs/testing.md) walks a complete beginn
 running, reading, writing, reviewing, and troubleshooting tests — and explains the expectation
 that merge requests include a meaningful test for changed behavior.
 
-CI runs `pnpm test` automatically on every pull request and on pushes to `main`/`stage`
+CI runs `pnpm test` automatically on every pull request and on pushes to `dev`/`stage`/`prod`
 (see `.github/workflows/test.yml`), so a broken or missing test is visible before it merges.
 
 > Browser/end-to-end testing (Playwright) is intentionally kept separate from this template.
