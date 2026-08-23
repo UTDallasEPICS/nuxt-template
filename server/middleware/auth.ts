@@ -21,11 +21,9 @@ export default defineEventHandler(async (event) => {
     return
   }
 
-  const pathname = event.path.split('?')[0]
+  const pathname = event.path.split('?')[0] ?? event.path
 
-  if (
-    PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
-  ) {
+  if (PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
     return
   }
 
