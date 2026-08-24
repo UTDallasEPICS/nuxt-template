@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileTypeFromFile } from 'file-type'
 
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({
@@ -27,26 +28,21 @@ export default defineEventHandler(async (event) => {
 
   const imagePath = record?.image
 
-  const filePath = path.join(process.env.UPLOAD_STORAGE_PATH || 'public/images', imagePath || 'null')
+  const filePath = path.join(
+    process.env.UPLOAD_STORAGE_PATH || 'public/images',
+    imagePath || 'null'
+  )
 
   if (!fs.existsSync(filePath)) {
     throw createError({ statusCode: 404, statusMessage: 'File not found' })
   }
 
+  // Files are stored without an extension, so detect the MIME type from the
+  // file's magic bytes. Falls back to a generic type if detection fails.
+  const detected = await fileTypeFromFile(filePath)
+  setHeader(event, 'Content-Type', detected?.mime ?? 'application/octet-stream')
+
   const fileStream = fs.createReadStream(filePath)
-
-  // Set content type based on file extension
-  // const ext = path.extname(filePath).toLowerCase()
-
-  // Defaults to octet stream as file types are NOT saved
-  // const mime =
-  //   ext === ".png" ? "image/png" :
-  //   ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" :
-  //   ext === ".gif" ? "image/gif" :
-  //   ext === ".webp" ? "image/webp" :
-  //   "application/octet-stream"
-
-  setHeader(event, 'Content-Type', 'application/octet-stream')
 
   return sendStream(event, fileStream)
 })

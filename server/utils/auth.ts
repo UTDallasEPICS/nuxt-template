@@ -1,19 +1,19 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import prisma from './prisma'
+import { env } from './env'
 import { emailOTP } from 'better-auth/plugins/email-otp'
 import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
+  host: env.EMAIL_HOST,
   port: 587,
   secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: env.EMAIL_USER,
+    pass: env.EMAIL_PASS,
   },
-});
-
+})
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -21,9 +21,9 @@ export const auth = betterAuth({
   }),
   plugins: [
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
+      async sendVerificationOTP({ email, otp }) {
         await transporter.sendMail({
-          from: process.env.EMAIL_FROM,
+          from: env.EMAIL_FROM,
           to: email,
           subject: 'OTP for nuxt-template',
           html: `Your OTP is: ${otp}`,

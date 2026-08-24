@@ -1,9 +1,9 @@
-name: Build and Publish Docker Image (Stage)
+name: Build and Publish Docker Image (Prod)
 
 on:
   push:
     branches:
-      - stage
+      - prod
 
 # id-token must also be granted here: a called workflow can never elevate
 # GITHUB_TOKEN permissions beyond what the calling workflow allows.
@@ -15,5 +15,5 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: stage
+      environment: prod
     secrets: inherit
