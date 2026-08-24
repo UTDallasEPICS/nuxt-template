@@ -1,5 +1,5 @@
 {
-  "name": "epics-template",
+  "name": "nuxt-template",
   "type": "module",
   "private": true,
   "scripts": {
